@@ -1,0 +1,32 @@
+---
+- hosts: all
+  tasks:
+  - name: ensure pip is installed
+    apt:
+      name: python-pip
+      state: present
+
+  - name: create a super important directory
+    file:
+      name: /tmp/super_important_dir
+      state: directory
+
+  - name: download a file to super important directory
+    get_url:
+      url: https://raw.githubusercontent.com/agilityroots/ansible-examples/master/files/sampleShellScript.sh
+      dest: /tmp/super_important_dir
+
+
+  - name: Execute Shell Script
+    shell: /tmp/super_important_dir/sampleShellScript.sh
+    register: sampleshellscript_output
+
+  - name: Echo the output of Shell Script
+    debug: var=sampleshellscript_output.stdout
+
+  - name: Store Output in a file
+    lineinfile:
+      path: /tmp/super_important_dir/my_ip_addr.txt
+      line: "{{sampleshellscript_output.stdout}}"
+      state: present
+      create: yes
